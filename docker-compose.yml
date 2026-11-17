@@ -1,0 +1,63 @@
+# HOMEY — environnement de démonstration (US10.4)
+#   docker compose up --build
+# Frontend (nginx)  : http://localhost:8080
+# Backend (gunicorn): http://localhost:8000  (interne via nginx : /api/)
+#
+# En production : copier .env.example → .env, définir HOMEY_SECRET_KEY,
+# HOMEY_DEBUG=0, HOMEY_ALLOWED_HOSTS et HOMEY_DB_*/HOMEY_REDIS_URL.
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-homey}
+      POSTGRES_USER: ${POSTGRES_USER:-homey}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-homey}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-homey} -d ${POSTGRES_DB:-homey}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+
+  backend:
+    build: ./backend
+    env_file: [.env]
+    environment:
+      HOMEY_DB_HOST: db
+      HOMEY_DB_NAME: ${POSTGRES_DB:-homey}
+      HOMEY_DB_USER: ${POSTGRES_USER:-homey}
+      HOMEY_DB_PASSWORD: ${POSTGRES_PASSWORD:-homey}
+      HOMEY_REDIS_URL: redis://redis:6379/1
+    volumes:
+      - media:/app/media
+      - mlmodels:/app/ml/models
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    expose:
+      - "8000"
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    volumes:
+      - media:/var/www/media:ro
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+  redisdata:
+  media:
+  mlmodels:

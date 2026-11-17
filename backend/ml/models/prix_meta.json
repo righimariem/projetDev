@@ -1,0 +1,25 @@
+{
+  "version": "20261021-100328",
+  "entraine_le": "2026-10-21T10:03:28.079473+00:00",
+  "n_echantillons": 2547,
+  "n_test": 510,
+  "mae": 117.31,
+  "rmse": 172.42,
+  "r2": 0.9704,
+  "prix_median": 1101.0,
+  "mae_pct_median": 10.65,
+  "cible": "prix",
+  "features_cat": [
+    "ville",
+    "type",
+    "etat",
+    "meuble"
+  ],
+  "features_num": [
+    "surface",
+    "chambres",
+    "sdb",
+    "nb_equipements",
+    "age_annonces_ville"
+  ]
+}

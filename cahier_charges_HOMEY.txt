@@ -1,0 +1,478 @@
+HOMEY
+CAHIER DES CHARGES
+Plateforme intelligente de recherche de logements et de colocation
+Matière : PROJET DE DÉVELOPPEMENT
+Présenté par : MAYSSA CHALGHOUM – MARIEM RIGHI – SALMA MHADHBI
+Classe : Ing-4-SDIAF-A
+Année universitaire : 2026–2027
+Sommaire
+1. Introduction générale
+2. Contexte
+3. Problématique
+4. Étude de l’existant
+5. Solution proposée
+6. Analyse des besoins
+7. Diagramme général de cas d’utilisation
+8. Méthodologie utilisée : Scrum
+9. Product Backlog
+10. Équipe Scrum
+11. Planification des sprints
+12. Outils utilisés dans la gestion de projet
+13. Conclusion
+1. Introduction générale
+HOMEY est une plateforme intelligente de recherche de logements et de colocation.
+2. Contexte
+Chercher un logement : beaucoup d’annonces, long à comparer, informations parfois incomplètes.
+Propriétaires : ils doivent publier les annonces et gérer les demandes.
+Colocation difficile : il faut trouver un logement et aussi des colocataires compatibles.
+3. Problématique
+Problème
+Description
+Annonces dispersées
+Plusieurs sites et groupes
+Annonces peu fiables
+Infos fausses ou incomplètes
+Colocataire introuvable
+Pas de compatibilité
+Recherche trop longue
+Beaucoup de temps perdu
+4. Étude de l’existant
+Plateforme
+Avantages
+Limites
+Facebook Marketplace
+Beaucoup d’offres ; Contact direct ; Grande communauté
+Recherche peu efficace ; Pas de filtres ; Infos peu structurées
+Mubawab
+Nombreuses annonces ; Filtres avancés ; Favoris et carte
+Ne regarde pas la personne ; Pas de matching colocataires
+Dari
+Orienté immobilier ; Recherche d’offres ; Infos sur les biens
+Annonces non vérifiées ; Application mobile seulement ; Pas de mise à jour continue
+5. Solution proposée
+Axe
+Fonctionnalités / bénéfices
+Recommandation intelligente
+Logements adaptés à mes besoins ; Moins de temps perdu
+Colocation facilitée
+Colocataires compatibles ; Selon ce que je recherche
+Annonces plus fiables
+Détection des incohérences ; Informations plus claires
+6. Analyse des besoins
+6.1 Les acteurs
+Acteur
+Rôle
+Fonctionnalités indiquées
+Locataire
+Cherche un logement ou un colocataire.
+Recherche ; Groupes ; Chat
+Propriétaire
+Publie et gère ses annonces.
+Annonces ; Demandes ; Chat
+Administrateur
+Supervise et modère la plateforme.
+Modération ; Utilisateurs ; Alertes
+6.2 Besoins fonctionnels
+Module
+Besoins
+Compte et accès
+S’authentifier (tous les acteurs) ; Gérer son profil et ses préférences
+Recherche de logement
+Consulter les annonces ; Rechercher par filtres ; Rechercher par IA ; Gérer ses favoris
+Gestion des annonces
+Créer, modifier, supprimer ; Analyser l’annonce par IA ; Répondre aux demandes
+Colocation
+Chercher un colocataire ; Créer ou rejoindre un groupe
+Communication
+Discuter par messages (chat) ; Recevoir des notifications
+Administration
+Gérer les utilisateurs ; Valider ou refuser les annonces ; Traiter les signalements ; Suivre dashboard et alertes IA
+6.3 Besoins non fonctionnels
+Besoin
+Description
+Sécurité
+Données protégées, mots de passe chiffrés et échanges sécurisés (HTTPS).
+Performance
+Recherches et pages qui répondent rapidement, même avec beaucoup d’annonces.
+Responsive
+Utilisable sur mobile, tablette et ordinateur.
+Ergonomie
+Interface simple, claire et facile à prendre en main.
+Maintenabilité
+Code modulaire, facile à corriger et à faire évoluer.
+Fiabilité
+Plateforme stable et disponible, sans perte de données.
+Contrôle des accès
+Droits différents selon le rôle : locataire, propriétaire, administrateur.
+Une plateforme sûre, rapide et agréable à utiliser, sur tous les appareils.
+7. Diagramme général de cas d’utilisation
+Le diagramme général de cas d’utilisation figure dans la présentation HOMEY. Les acteurs identifiés sont le locataire, le propriétaire et l’administrateur.
+8. Méthodologie utilisée : Scrum
+Le projet utilise la méthodologie Scrum.
+8.1 Processus Scrum
+Élément
+Description
+Product Backlog
+Est une liste de toutes les fonctionnalités du projet, classées par priorité.
+Sprint Planning Meeting
+Contient les tâches choisies par l’équipe pour le sprint.
+Sprint Backlog
+Contient le travail prévu pour le sprint.
+Sprint Review & Sprint Retrospective
+À la fin du sprint, le résultat est présenté lors de la Sprint Review, puis l’équipe discute de ce qu’elle peut améliorer pendant la Sprint Retrospective. Le cycle recommence ensuite avec un nouveau sprint.
+Daily Standup
+24 H
+Durée indiquée sur le schéma Scrum
+Sprint 1–4 semaines
+9. Product Backlog
+Les priorités sont indiquées dans la présentation par MUST, SHOULD et COULD. SP correspond à la valeur affichée dans la colonne SP.
+EPIC 1 — Authentification / Profil
+ID
+User story
+Priorité
+SP
+US1.1
+En tant que visiteur, je veux créer un compte Locataire ou Propriétaire afin d’accéder aux fonctionnalités adaptées à mon rôle.
+MUST
+3
+US1.2
+En tant qu’utilisateur, je veux me connecter et me déconnecter afin d’accéder à mon espace personnel de manière sécurisée.
+MUST
+2
+US1.3
+En tant qu’utilisateur, je veux réinitialiser mon mot de passe afin de récupérer l’accès à mon compte.
+MUST
+3
+US1.4
+En tant qu’utilisateur, je veux modifier mon mot de passe afin de maintenir la sécurité de mon compte.
+SHOULD
+2
+US1.5
+En tant qu’utilisateur, je veux gérer mon profil afin de maintenir mes informations personnelles à jour.
+MUST
+3
+US1.6
+En tant que locataire, je veux définir mes préférences de logement afin qu’elles soient utilisées par le système de recommandation.
+MUST
+5
+US1.7
+En tant qu’administrateur, je veux disposer d’un accès séparé afin que seules les personnes autorisées puissent accéder aux fonctions d’administration.
+MUST
+3
+EPIC 2 — Logements
+ID
+User story
+Priorité
+SP
+US2.1
+En tant que propriétaire, je veux créer une annonce de logement avec toutes ses caractéristiques afin de proposer mon bien.
+MUST
+5
+US2.2
+En tant que propriétaire, je veux ajouter plusieurs photos à mon annonce afin de présenter correctement le logement.
+MUST
+5
+US2.3
+En tant que propriétaire, je veux modifier mon annonce afin de maintenir ses informations à jour.
+MUST
+3
+US2.4
+En tant que propriétaire, je veux supprimer ou archiver une annonce afin de gérer mes logements.
+SHOULD
+2
+US2.5
+En tant que propriétaire, je veux consulter mes annonces et leur statut afin de suivre leur évolution.
+MUST
+3
+US2.6
+En tant que propriétaire, je veux soumettre mon annonce à validation afin qu’elle soit vérifiée avant publication.
+MUST
+5
+US2.7
+En tant que propriétaire, je veux marquer un logement comme loué afin qu’il ne soit plus proposé aux utilisateurs.
+MUST
+2
+EPIC 3 — Consultation / Recherche
+ID
+User story
+Priorité
+SP
+US3.1
+En tant que visiteur, je veux consulter les logements publiés afin de découvrir les offres disponibles.
+MUST
+3
+US3.2
+En tant que visiteur, je veux consulter les détails d’un logement afin de décider s’il correspond à mes besoins.
+MUST
+3
+US3.3
+En tant qu’utilisateur, je veux rechercher des logements avec plusieurs filtres afin de trouver rapidement les offres correspondant à mes critères.
+MUST
+5
+US3.4
+En tant qu’utilisateur, je veux trier et paginer les résultats afin de faciliter leur consultation.
+SHOULD
+2
+US3.5
+En tant qu’utilisateur connecté, je veux ajouter ou retirer des logements de mes favoris afin de retrouver facilement les offres intéressantes.
+SHOULD
+3
+US3.6
+En tant que locataire, je veux contacter un propriétaire afin d’obtenir des informations supplémentaires sur un logement.
+MUST
+3
+EPIC 4 — Administration
+ID
+User story
+Priorité
+SP
+US4.1
+En tant qu’administrateur, je veux gérer les utilisateurs et propriétaires afin de contrôler les comptes de la plateforme.
+MUST
+3
+US4.2
+En tant qu’administrateur, je veux suspendre, bloquer ou réactiver un compte afin de gérer les utilisateurs problématiques.
+SHOULD
+3
+US4.3
+En tant qu’administrateur, je veux consulter les annonces en attente afin de les vérifier avant publication.
+MUST
+2
+US4.4
+En tant qu’administrateur, je veux accepter ou refuser une annonce avec une justification afin de contrôler les logements publiés.
+MUST
+5
+US4.5
+En tant qu’utilisateur, je veux signaler une annonce ou un comportement suspect afin d’améliorer la sécurité de la plateforme.
+SHOULD
+3
+US4.6
+En tant qu’administrateur, je veux traiter les signalements afin de prendre les mesures nécessaires.
+SHOULD
+5
+US4.7
+En tant qu’administrateur, je veux consulter un tableau de bord statistique afin de suivre l’activité de la plateforme.
+SHOULD
+8
+US4.8
+En tant qu’administrateur, je veux consulter les alertes générées par l’IA afin de décider après vérification si une action est nécessaire.
+SHOULD
+3
+EPIC 5 — IA / Annonces
+ID
+User story
+Priorité
+SP
+US5.1
+En tant que propriétaire, je veux générer une description assistée par IA à partir des informations et photos de mon logement afin de créer plus facilement mon annonce.
+SHOULD
+8
+US5.2
+En tant que propriétaire, je veux analyser les photos de mon logement avec l’IA afin d’identifier les pièces présentes.
+SHOULD
+13
+US5.3
+En tant qu’administrateur, je veux être alerté lorsqu’une incohérence potentielle est détectée entre le texte, les caractéristiques et les photos afin de pouvoir vérifier l’annonce.
+SHOULD
+8
+US5.4
+En tant que système, je veux lancer automatiquement l’analyse IA lors de la soumission d’une annonce afin que l’administrateur dispose des résultats lors de sa vérification.
+MUST
+5
+US5.5
+En tant qu’administrateur, je veux être alerté lorsqu’un prix semble anormal par rapport aux logements similaires afin de pouvoir effectuer une vérification.
+COULD
+8
+US5.6
+En tant que propriétaire, je veux consulter un score de qualité de mon annonce afin d’améliorer sa qualité avant publication.
+COULD
+5
+EPIC 6 — Recherche intelligente
+ID
+User story
+Priorité
+SP
+US6.1
+En tant que locataire, je veux décrire ma recherche en langage naturel afin que l’IA transforme mes besoins en critères de recherche.
+SHOULD
+8
+US6.2
+En tant que locataire, je veux recevoir des logements recommandés et classés selon mes besoins afin de trouver plus rapidement un logement adapté.
+MUST
+13
+US6.3
+En tant que locataire, je veux comprendre pourquoi un logement m’est recommandé afin de pouvoir évaluer la pertinence de la recommandation.
+SHOULD
+3
+US6.4
+En tant que locataire, je veux que mes recherches, favoris et comportements soient pris en compte afin d’améliorer les recommandations.
+COULD
+5
+EPIC 7 — Matching / Colocation
+ID
+User story
+Priorité
+SP
+US7.1
+En tant que locataire, je veux choisir si je cherche un logement seul, une colocation ou si je suis indécis afin d’activer les fonctionnalités adaptées.
+MUST
+3
+US7.2
+En tant que locataire, je veux définir mes critères de colocation afin de trouver des personnes compatibles avec mon mode de vie.
+MUST
+5
+US7.3
+En tant que locataire, je veux obtenir des colocataires compatibles avec un score afin de choisir les profils les plus adaptés.
+MUST
+13
+US7.4
+En tant que locataire, je veux comprendre mon score de compatibilité afin de connaître les critères communs et divergents.
+SHOULD
+3
+US7.5
+En tant que locataire, je veux accepter ou refuser une proposition de matching afin de contrôler mes mises en relation.
+MUST
+3
+US7.6
+En tant que propriétaire, je veux voir les profils compatibles avec mon logement afin de trouver des locataires correspondant à ses caractéristiques.
+COULD
+8
+EPIC 8 — Groupes de colocation
+ID
+User story
+Priorité
+SP
+US8.1
+En tant que locataire, je veux créer un groupe de colocation afin de réunir les personnes avec lesquelles je souhaite chercher un logement.
+MUST
+5
+US8.2
+En tant que locataire, je veux choisir un logement puis inviter un colocataire compatible afin de constituer une colocation.
+MUST
+8
+US8.3
+En tant que locataire, je veux trouver un colocataire avant de chercher un logement afin de rechercher ensuite un logement adapté au groupe.
+MUST
+8
+US8.4
+En tant que groupe, je veux recevoir des logements recommandés selon les préférences de tous les membres afin de trouver un logement adapté au groupe.
+SHOULD
+8
+US8.5
+En tant que membre, je veux quitter ou dissoudre un groupe de colocation afin de gérer son cycle de vie.
+SHOULD
+3
+US8.6
+En tant que groupe, je veux rechercher un troisième colocataire selon sa compatibilité avec tous les membres afin de former un groupe cohérent.
+SHOULD
+13
+US8.7
+En tant que propriétaire, je veux gérer un logement destiné à plusieurs colocataires afin de proposer plusieurs places disponibles.
+COULD
+8
+EPIC 9 — Communication / Notifications
+ID
+User story
+Priorité
+SP
+US9.1
+En tant que locataire, je veux discuter avec le propriétaire afin d’obtenir des informations sur le logement.
+SHOULD
+8
+US9.2
+En tant que colocataire, je veux discuter avec les autres colocataires après un matching accepté afin de préparer la colocation.
+SHOULD
+5
+US9.3
+En tant que membre, je veux participer à une conversation de groupe afin de communiquer avec les autres membres.
+COULD
+3
+US9.4
+En tant que locataire, je veux recevoir des notifications concernant les logements, matchings, invitations et messages afin de ne manquer aucune information importante.
+SHOULD
+5
+US9.5
+En tant que propriétaire, je veux recevoir des notifications concernant mes annonces, demandes et messages afin de suivre mon activité.
+SHOULD
+3
+US9.6
+En tant qu’utilisateur, je veux disposer d’un centre de notifications avec un compteur non lu afin de gérer mes notifications.
+COULD
+2
+EPIC 10 — Qualité / Projet
+ID
+User story
+Priorité
+SP
+US10.1
+En tant qu’équipe, je veux mettre en place le dépôt Git, les environnements et la CI/CD afin de travailler de façon synchronisée.
+MUST
+5
+US10.2
+En tant qu’équipe, je veux que l’application soit responsive afin qu’elle fonctionne sur ordinateur et mobile.
+MUST
+5
+US10.3
+En tant qu’équipe, je veux réaliser des tests unitaires, d’intégration et d’acceptation afin de vérifier la qualité de l’application.
+MUST
+8
+US10.4
+En tant qu’équipe, je veux déployer l’application afin de disposer d’un environnement de démonstration.
+MUST
+5
+US10.5
+En tant qu’équipe, je veux rédiger le rapport final en LaTeX afin de présenter le projet de manière structurée.
+MUST
+5
+10. Équipe Scrum
+Rôle
+Membre(s)
+Responsabilités indiquées
+Product Owner
+Mariem
+Donne la vision produit ; rédiger le product backlog
+Scrum Master
+Salma
+Préparer le sprint planning
+Development Team
+Salma, Mariem et Mayssa
+Programmation
+11. Planification des sprints
+On a divisé le planning en 6 sprints dont chacun est organisé dans 2 semaines.
+Sprint
+Contenu
+Période
+Sprint 1
+Fondations, authentification & profils
+Sem. 1–2
+Sprint 2
+Gestion & recherche des logements
+Sem. 3–4
+Sprint 3
+Administration & validation
+Sem. 5–6
+Sprint 4
+IA & recherche intelligente
+Sem. 7–8
+Sprint 5
+Colocation, matching & communication
+Sem. 9–10
+Sprint 6
+IA avancée, tests & déploiement
+Sem. 11–12
+12. Outils utilisés dans la gestion de projet
+Outil
+Utilisation
+Fonctionnalités indiquées
+JIRA
+Plan & Track
+Product Backlog ; Sprint planning ; Suivi de l’avancement
+GITHUB
+Build & Version
+Stocker le code source du projet ; Gérer les versions du code ; Suivre l’historique des modifications
+13. Conclusion
+Notre plateforme de logement intelligente Homey va permettre de :
+Faciliter la recherche de logements grâce à l’IA.
+Recommander des logements adaptés aux besoins de chacun.
+Trouver des colocataires compatibles grâce au matching intelligent.
+Offrir une expérience plus simple, personnalisée et fiable.

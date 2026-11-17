@@ -1,0 +1,40 @@
+# Secrets / environnement (Sprint 6 — ne jamais commiter)
+.env
+.env.local
+*.env
+!.env.example
+
+# Python / Django
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+backend/db.sqlite3
+backend/staticfiles/
+backend/media/
+*.log
+
+# Modèles ML entraînés
+backend/ml/modeles/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Divers
+.DS_Store
+.vscode/
+.idea/
+
+# Outil de compilation LaTeX (tectonic)
+tools/tectonic.exe
+
+# Rapport : artefacts de compilation
+rapport/*.aux
+rapport/*.log
+rapport/*.out
+rapport/*.toc
+rapport/*.xdv
+
+# Couverture locale
+coverage_report.txt

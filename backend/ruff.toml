@@ -1,0 +1,11 @@
+# Lint HOMEY (backend) — exécuté en CI via `ruff check .`
+target-version = "py312"
+line-length = 120
+
+[lint]
+# E4/E7/E9/F : règles par défaut de ruff (erreurs réelles) + I (imports triés)
+select = ["E4", "E7", "E9", "F", "I"]
+
+[lint.per-file-ignores]
+# Les seeds/commandes importent volontairement des modèles pour le side-effect
+"*/management/commands/*.py" = ["F401"]

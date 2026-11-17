@@ -1,0 +1,5 @@
+# Dépendances de production (image backend, US10.4) — au-dessus de requirements.txt
+-r requirements.txt
+gunicorn>=23.0
+psycopg[binary]>=3.2
+sentry-sdk>=2.20

@@ -1,0 +1,370 @@
+% Rapport final --- HOMEY (US10.5)
+% Compilation : pdflatex rapport.tex (×2, pour la table des matières)
+\documentclass[11pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+\hypersetup{colorlinks=true,linkcolor=teal!60!black,urlcolor=blue!60!black,citecolor=teal!60!black}
+\definecolor{codebg}{RGB}{248,248,248}
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  showstringspaces=false,
+  keywordstyle=\color{blue!60!black},
+  commentstyle=\color{green!40!black},
+  stringstyle=\color{orange!70!black},
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{HOMEY --- Rapport final}}
+\fancyhead[R]{\small\textit{\thepage}}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\title{\textbf{HOMEY}\\[6pt]
+\large Plateforme intelligente de location et de colocation\\[4pt]
+\normalsize Rapport final de projet}
+\author{Mayssa Chalghoum \and Mariem Righi \and Salma Mhadhbi\\[4pt]
+\small Ing-4-SDIAF-A --- 2026--2027\\
+\small Product Owner : Mariem --- Scrum Master : Salma}
+\date{Année universitaire 2026--2027}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\begin{abstract}
+\noindent HOMEY est une plateforme intelligente de location et de colocation destinée au marché
+tunisien. Au-delà de la recherche classique d'annonces, elle intègre huit briques intelligentes :
+recherche multicritères (F1), recommandation de logements avec score et explications (F2/F8),
+recherche et matching de colocataires (F3/F4), recommandation pour binômes et groupes (F5),
+estimation de prix par apprentissage automatique (F6) et détection d'anomalies de prix (F7).
+Le système combine un backend Django 6 / Django REST Framework, un frontend React 19 / Vite /
+TypeScript et des modèles scikit-learn / LightGBM intégrés au même dépôt. Ce rapport présente
+l'étude de l'existant, la conception, la réalisation, les choix d'architecture, la stratégie de
+tests (98 tests backend, 9 tests frontend), la chaîne CI/CD et le déploiement conteneurisé.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% -----------------------------------------------------------------
+\chapter{Introduction générale}
+
+\section{Contexte}
+La location de logements en Tunisie reste largement fondée sur des annonces dispersées, des
+groupes de messagerie et le bouche-à-oreille. L'information y est peu structurée : les prix
+difficilement vérifiables, la recherche laborueuse et la colocation encore plus mal servie.
+HOMEY (\textit{Home-oriented Yielding Matching Engine}) répond à ce constat en réunissant sur une
+seule plateforme la recherche d'annonces, la mise en relation locataire/propriétaire et un
+ensemble de fonctions d'aide à la décision fondées sur l'intelligence artificielle.
+
+\section{Objectifs du projet}
+\begin{itemize}[leftmargin=*]
+  \item Fournir une expérience de recherche complète et responsive (filtres, tri, pagination,
+        favoris, contact du propriétaire) --- F1, US3.x ;
+  \item Proposer des recommandations de logements \emph{explicables} (score en pourcentage et
+        raisons compréhensibles) --- F2/F8, US6.2/US6.3 ;
+  \item Estimer le prix d'un logement et signaler les prix inhabituels, sans jamais employer le
+        mot « fraude » --- F6/F7, US5.5 ;
+  \item Faciliter la colocation : recherche de colocataires, compatibilité, groupes et budget
+        combiné --- F3/F4/F5, EPIC 7--8 ;
+  \item Garantir la qualité du logiciel : tests, CI/CD, déploiement de démonstration et
+        documentation --- EPIC 10.
+\end{itemize}
+
+\section{Organisation du rapport}
+Le chapitre~2 présente l'étude de l'existant et la comparaison des solutions concurrentes. Le
+chapitre~3 détaille la conception (acteurs, modèle de données, API). Le chapitre~4 décrit la
+réalisation : architecture logicielle, briques IA et intégration. Le chapitre~5 couvre les choix
+d'implémentation et la qualité (tests, CI/CD, sécurité). Le chapitre~6 décrit le déploiement. Le
+chapitre~7 conclut et ouvre des perspectives.
+
+% -----------------------------------------------------------------
+\chapter{Étude de l'existant}
+
+\section{Solutions existantes}
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{lXXX}
+\toprule
+\textbf{Solution} & \textbf{Points forts} & \textbf{Limites} & \textbf{Écart avec HOMEY} \\
+\midrule
+RealMate / Remax TN & Annonces abondantes, marques connues & Recherche filtres basiques,
+pas de colocation & Pas de recommandation ni d'explication \\
+\addlinespace
+Facebook Marketplace & Gratuit, forte audience & Qualité variable, aucun contrôle des prix,
+pas de profiling & Aucune vérification, aucun score \\
+\addlinespace
+Airbnb & Expérience soignée, photos & Hôtellerie, prix par nuit, hors contexte local &
+Location longue durée non couverte \\
+\addlinespace
+Sites d'annonces classiques & Base d'annonces large & Pas d'estimation de prix, pas de matching
+coloc, tri opaque & Toutes les briques F1--F8 absentes \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Analyse critique}
+Les solutions existantes couvrent la \emph{publication} d'annonces mais très peu l'\emph{aide à la
+décision} : aucun n'explique pourquoi un logement est recommandé, n'estime le prix d'un bien ou
+ne traite la colocation comme un cas d'usage à part entière. HOMEY se positionne précisément sur
+ce différentiel : des scores \emph{explicables} (F8 dès l'origine du produit), une estimation de
+prix entraînée sur des données tunisiennes et un volet colocation complet (profils, groupes,
+budget combiné).
+
+\section{Justification des choix techniques}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Django + DRF} : écosystème maturé, admin intégré pour la modération (EPIC 4),
+        ORM relationnel adapté au modèle de données riche ;
+  \item \textbf{React + Vite + TypeScript} : composants réutilisables, typage fort, HMR pour la
+        productivité, bundle statique servi par Nginx ;
+  \item \textbf{scikit-learn / LightGBM} : mêmes outils côté back que les notebooks d'expérimentation,
+        intégration directe dans Django (pas de micro-service), formats \texttt{joblib} standard ;
+  \item \textbf{PostgreSQL + Redis} : relationnel transactionnel + cache pour les scores et
+        estimations répétées.
+\end{itemize}
+
+% -----------------------------------------------------------------
+\chapter{Conception}
+
+\section{Acteurs et exigences}
+\begin{center}
+\begin{tabularx}{\textwidth}{lXX}
+\toprule
+\textbf{Acteur} & \textbf{Rôle} & \textbf{Fonctionnalités principales} \\
+\midrule
+Locataire & Cherche un logement ou des colocataires & Recherche, recommandations, favoris,
+groupes, chat \\
+Propriétaire & Publie et gère ses annonces & CRUD annonce, photos, statut, demande de contact \\
+Administrateur & Supervise et modère & Validation des annonces, utilisateurs, signalements,
+alertes d'anomalies de prix \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Périmètre fonctionnel --- 10 épics}
+Le cahier des charges définit 10 épics et 8 briques IA : authentification/profils (EPIC 1),
+logements (EPIC 2), consultation/recherche (EPIC 3), administration (EPIC 4), IA sur les annonces
+(EPIC 5), recherche intelligente (EPIC 6), matching/colocation (EPIC 7), groupes de colocation
+(EPIC 8), communication/notifications (EPIC 9) et qualité/projet (EPIC 10).
+
+\section{Modèle de données}
+Les données sont réparties en six applications Django :
+\begin{itemize}[leftmargin=*]
+  \item \texttt{accounts} : \texttt{CustomUser} (rôles locataire/propriétaire/admin),
+        \texttt{ProfilLocataire} (budget, préférences, mode de recherche), \texttt{ProfilProprietaire} ;
+  \item \texttt{listings} : \texttt{Logement} (statuts brouillon -> en attente -> actif / refusé /
+        loué / archivé), \texttt{Equipement}, \texttt{Photo}, \texttt{ModerationDecision} ;
+  \item \texttt{matching} : \texttt{Match} (locataires), \texttt{GroupeColocation} (le binôme est
+        un groupe de deux), \texttt{InvitationGroupe}, \texttt{MatchLogement} (cible = personne
+        ou groupe) ;
+  \item \texttt{ai} : \texttt{Recommendation}, \texttt{PriceEstimation}, \texttt{AnomalyFlag},
+        \texttt{ModelVersion} (versioning des modèles) ;
+  \item \texttt{messaging} : \texttt{Conversation}, \texttt{Message}, \texttt{Notification} ;
+  \item \texttt{core} : \texttt{Favori}, \texttt{Signalement}, \texttt{ContactDemande}.
+\end{itemize}
+
+\section{API REST}
+L'API est préfixée par \texttt{/api/v1/} et protégée par JWT (access 30 min, refresh 7 jours avec
+rotation). Exemples de routes :
+\begin{lstlisting}[language=python]
+GET  /api/v1/listings/?ville=Ariana&prix_max=900&equipements=clim,wifi   # F1
+GET  /api/v1/recommendations/            # F2 : score + explications[]
+GET  /api/v1/search-natural/?q=...       # recherche en langage naturel
+POST /api/v1/estimate-price/             # F6 : estimation ML
+GET  /api/v1/recommendations/?groupes=   # F5 : recommandations de groupe
+\end{lstlisting}
+Chaque recommandation renvoie obligatoirement un \texttt{score} \emph{et} une liste
+\texttt{explications} : l'explicabilité (F8) est une contrainte structurelle de l'API, pas une
+option.
+
+% -----------------------------------------------------------------
+\chapter{Réalisation}
+
+\section{Architecture logicielle}
+\begin{lstlisting}[language=python]
+Frontend (React 19 + Vite + TS + Tailwind)      Nginx (SPA + proxy /api)
+        |  JWT / TanStack Query / Zustand
+Backend Django 6 + DRF  (gunicorn)
+  accounts | listings | matching | ai | messaging | core
+        |                                     |
+   PostgreSQL 16                    Redis 7 (cache)
+        |
+   ml/ : entraînement (train_f6, scan_f7) + services (prédiction, explication)
+\end{lstlisting}
+
+\section{Briques IA}
+\subsection{Estimation de prix (F6)}
+Régression \textbf{LightGBM} sur un pipeline \texttt{ColumnTransformer} (variables catégorielles
+one-hot, numériques standardisées) entraînée sur un jeu synthétique calibré sur les realia
+tunisiennes et exportée en \texttt{joblib} avec \texttt{prix\_meta.json} (métriques MAE, R²,
+médiane des erreurs relatives). Le modèle est versionné par \texttt{ModelVersion}.
+
+\subsection{Détection d'anomalies de prix (F7)}
+Les résidus de F6 sont normalisés par l'écart absolu médian (MAD, robuste aux valeurs extrêmes) :
+un prix est signalé quand $\lvert r\rvert / (1{,}4826 \times \mathrm{MAD}) > k$ \emph{et} que
+l'écart relatif dépasse un seuil. Le message affiché est « Prix potentiellement inhabituel ---
+vérification recommandée » : jamais le mot « fraude » (exigence US5.5). Les signaux alimentent
+une file de travail consultable par l'administrateur (\texttt{AnomalyFlag}).
+
+\subsection{Recommandations explicables (F2/F8)}
+Score pondéré 0--100 : budget, ville, chambres, surface, équipements, disponibilité, type/meublé,
+avec bonus de \emph{comportement} seulement si l'utilisateur a un historique. Chaque critère
+produit une ligne d'explication structurée \texttt{\{critere, points, poids, raison\}}
+rendue lisible côté frontend. Les recommandations de groupe (F5) combinent les préférences des
+membres et le budget total.
+
+\subsection{Recherche en langage naturel (F8 / US6.1)}
+Une phrase comme « appartement meublé à Ariana moins de 900 DT » est analysée par des règles
+structurées (ville, type, budget, équipements) produisant directement un payload de filtres F1 ;
+le résultat réutilise donc le chemin de recherche éprouvé plutôt qu'un second moteur.
+
+\section{Frontend}
+\begin{itemize}[leftmargin=*]
+  \item Client Axios avec intercepteur JWT et rafraîchissement automatique des tokens ;
+  \item TanStack Query pour le cache et l'état serveur, Zustand pour la session et les filtres ;
+  \item Garde de routes \texttt{RequireAuth} avec redirection vers la page de connexion ;
+  \item Responsive mobile-first (Tailwind), composants réutilisables (\texttt{ListingCard},
+        panneaux d'explication, filtres, chat).
+\end{itemize}
+
+% -----------------------------------------------------------------
+\chapter{Qualité : tests, CI/CD et sécurité}
+
+\section{Stratégie de tests (US10.3)}
+\begin{center}
+\begin{tabularx}{\textwidth}{lXXr}
+\toprule
+\textbf{Niveau} & \textbf{Outil} & \textbf{Couverture} & \textbf{Nb} \\
+\midrule
+Unitaire / intégration backend & pytest + pytest-django & API, moteurs de score, services ML
+(fixtures factices) & 98 \\
+Frontend (composants, store, pages) & Vitest + Testing Library & store auth, cartes, garde de
+routes, page recommandations & 9 \\
+Lint & ruff (backend), oxlint (frontend) & règles E/F/I, hooks React & --- \\
+Build de production & \texttt{tsc -b \&\& vite build} & typage strict & --- \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Les tests ML n'entraînent pas de vrais modèles : des fixtures factices isolent la logique
+(scoring, MAD, formats de sortie), ce qui garde la suite rapide et déterministe. Le taux de
+couverture backend est mesuré en CI par \texttt{pytest --cov}.
+
+\section{Intégration continue (US10.1)}
+Le workflow GitHub Actions exécute sur chaque push/PR deux jobs indépendants :
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{backend} : installation de \texttt{requirements.txt}, \texttt{ruff check .},
+        \texttt{pytest --cov} ;
+  \item \textbf{frontend} : \texttt{npm ci}, \texttt{oxlint}, \texttt{vitest run} (mode CI),
+        \texttt{npm run build}.
+\end{enumerate}
+Un échec de lint, de test ou de build bloque la fusion : la qualité est vérifiée automatiquement
+avant chaque intégration.
+
+\section{Sécurité (Sprint 6)}
+\begin{itemize}[leftmargin=*]
+  \item Secrets hors du code : \texttt{HOMEY\_SECRET\_KEY}, \texttt{HOMEY\_DEBUG},
+        \texttt{HOMEY\_ALLOWED\_HOSTS}, \texttt{HOMEY\_DB\_*}, \texttt{HOMEY\_SENTRY\_DSN}
+        lus depuis l'environnement, modèle fourni dans \texttt{.env.example} (jamais commité) ;
+  \item Limitation de débit (throttling DRF) : 10/min sur login/register, 20/min sur les
+        endpoints IA coûteux, 60/min anonyme, 300/min authentifié ;
+  \item En production (\texttt{HOMEY\_DEBUG=0}) : HSTS, redirection SSL, cookies HttpOnly,
+        \texttt{X-Frame-Options: DENY}, en-têtes anti-sniffing ;
+  \item JWT court avec rotation du refresh token, validation du profil du sujet au
+        rafraîchissement (refresh orphelin -> 401 propre) ;
+  \item Contrôle d'accès par rôle (IsAuthenticatedOrReadOnly + permissions dédiées aux vues
+        propriétaire/administrateur).
+\end{itemize}
+
+% -----------------------------------------------------------------
+\chapter{Déploiement (US10.4)}
+
+\section{Environnement de démonstration}
+Le dépôt contient une chaîne de déploiement conteneurisée complète :
+\begin{itemize}[leftmargin=*]
+  \item \texttt{backend/Dockerfile} : image \texttt{python:3.12-slim}, dépendances de production
+        (gunicorn, psycopg, sentry-sdk), migrations puis démarrage gunicorn (3 workers) ;
+  \item \texttt{frontend/Dockerfile} : build multi-étapes Node 22 -> nginx servant la SPA ;
+  \item \texttt{frontend/nginx.conf} : proxy \texttt{/api/} vers le backend, fallback SPA,
+        cache des assets ; modèle HTTPS (certbot) dans \texttt{nginx.conf.example} ;
+  \item \texttt{docker-compose.yml} : PostgreSQL 16, Redis 7, backend, frontend avec volumes
+        persistants (données, médias, modèles ML) et healthchecks.
+\end{itemize}
+
+\section{Exploitation}
+\begin{lstlisting}[language=bash]
+cp .env.example .env      # renseigner les secrets
+docker compose up -d --build
+# HTTPS : certbot (webroot) + rechargement nginx
+# Sauvegarde : pg_dump quotidien planifié par crontab
+\end{lstlisting}
+L'intégration Sentry est optionnelle : définir \texttt{HOMEY\_SENTRY\_DSN} active les remontées
+d'erreurs côté Django. Le cache bascule de \texttt{locmem} (développement) à Redis (production)
+sans changer le code applicatif.
+
+% -----------------------------------------------------------------
+\chapter{Conclusion et perspectives}
+
+\section{Bilan}
+Le projet HOMEY a livré les trois quarts du périmètre prévu, avec l'ensemble des briques IA
+F1--F8 et les exigences MUST du cahier des charges : authentification par rôles, CRUD d'annonces
+avec modération, recherche multicritères, recommandations explicables, matching et groupes de
+colocation, estimation et détection d'anomalies de prix, messagerie, administration, tests,
+CI/CD et déploiement conteneurisé. La qualité est outillée : 98 tests backend, 9 tests frontend,
+lint automatisé et intégration continue bloquante.
+
+\section{Difficultés rencontrées}
+\begin{itemize}[leftmargin=*]
+  \item Absence de jeu de données public des loyers tunisiens : résolu par un générateur
+        synthétique calibré, réentraînable sur de vraies données dès qu'elles sont disponibles ;
+  \item Explicabilité : passer d'un score opaque à des raisons lisibles a imposé une structure
+        d'explication commune réutilisée par F2, F4 et F5 ;
+  \item Stabilité des tests frontend : le routage React a dû être isolé (mock) pour rendre la
+        suite déterministe en environnement jsdom.
+\end{itemize}
+
+\section{Perspectives}
+\begin{itemize}[leftmargin=*]
+  \item Pipeline d'entraînement continu (ré-entraînement planifié, dérive des données surveillée
+        par MAD) ;
+  \item Reconnaissance de pièces sur photos (US5.2) et contrôle texte/photos (US5.3) par modèle
+        de vision ;
+  \item Temps réel (Django Channels) pour le chat et les notifications ;
+  \item LightFM dès le volume d'interactions suffisant, évalué en Precision@K / MAP@10 ;
+  \item Déploiement sur VPS avec HTTPS automatisé et sauvegardes chiffrées hors site.
+\end{itemize}
+
+% -----------------------------------------------------------------
+\begin{thebibliography}{9}
+\bibitem{django} Django Software Foundation. \textit{Django Documentation}, v6.0.
+\bibitem{drf} Django REST Framework. \textit{API Guide}.
+\bibitem{simplejwt} SimpleJWT. \textit{JSON Web Token support for Django REST Framework}.
+\bibitem{lightgbm} Ke \emph{et al.} LightGBM: A Highly Efficient Gradient Boosting Decision Tree. NeurIPS 2017.
+\bibitem{sklearn} Pedregosa \emph{et al.} Scikit-learn: Machine Learning in Python. JMLR 12, 2011.
+\bibitem{react} Meta. \textit{React documentation}.
+\bibitem{vite} Evan You. \textit{Vite --- Next Generation Frontend Tooling}.
+\bibitem{iatransparency} Ribeiro \emph{et al.} ``Why Should I Trust You?'': Explaining the Predictions of Any Classifier. KDD 2016.
+\bibitem{mad} Leys \emph{et al.} Detecting outliers: Do not use standard deviation around the mean. J. Clin. Epidemiol., 2013.
+\end{thebibliography}
+
+\end{document}

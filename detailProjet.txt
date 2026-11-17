@@ -1,0 +1,286 @@
+Oui, tu as raison. F6, F7 et F8 doivent absolument faire partie du cahier des charges,
+surtout parce qu'elles renforcent fortement la partie IA de SmartHousing.
+
+Je corrigerais la partie fonctionnalités / IA comme ceci :
+
+Fonctionnalités intelligentes
+
+F1 -- Recherche de logements
+
+Le client peut rechercher des logements selon différents critères : localisation, budget,
+nombre de chambres, surface, équipements, disponibilité, etc.
+
+F2 -- Recommandation Client  Logement
+
+Le système analyse le profil et les préférences du client et recommande les logements
+les plus compatibles.
+
+Exemple :
+
+        Appartement A  94 %
+        Appartement B  87 %
+        Appartement C  75 %
+
+F3 -- Recherche de colocataire
+
+Le client peut indiquer qu'il souhaite vivre en colocation et renseigner ses préférences :
+
+     budget ;
+     localisation ;
+     disponibilité ;
+     fumeur/non-fumeur ;
+     animaux ;
+     niveau de propreté ;
+     bruit ;
+     horaires ;
+     visiteurs ;
+     habitudes de vie.
+
+F4 -- Matching Client  Client
+Le système compare les profils de deux clients afin d'identifier les colocataires
+potentiellement compatibles.
+Exemple :
+
+        Sarah  Yasmine  93 % compatible
+Le système prend notamment en compte :
+
+     budget ;
+     localisation ;
+     disponibilité ;
+     habitudes ;
+     préférences de vie.
+
+F5 -- Matching Binôme  Logement
+
+Après l'acceptation mutuelle de deux clients, un binôme est créé.
+Le système combine alors leurs besoins et recherche les logements adaptés aux deux
+personnes.
+Exemple :
+Sarah
+Budget : 450 DT
+
+     +
+Yasmine
+Budget : 500 DT
+
+     
+Budget du binôme  950 DT
+
+     
+AI Matching
+
+     
+Appartement A  96 %
+Appartement B  89 %
+Appartement C  76 %
+
+F6 -- Estimation du prix
+
+Le système utilise un modèle de Machine Learning afin d'estimer le prix d'un logement à
+partir de ses caractéristiques.
+Les caractéristiques peuvent inclure :
+
+     localisation ;
+     surface ;
+     nombre de chambres ;
+     type de logement ;
+     équipements ;
+     état du logement ;
+     etc.
+
+Exemple
+
+Un propriétaire saisit :
+Localisation : Ariana
+Surface : 100 m²
+Chambres : 2
+Meublé : Oui
+Équipements : ...
+Le modèle peut estimer :
+
+        Prix estimé : 850 DT/mois
+Cette fonctionnalité peut être utile :
+
+     au propriétaire pour fixer un prix cohérent ;
+     au client pour évaluer si le prix demandé semble raisonnable.
+F7 -- Détection d'anomalies
+
+Le système identifie les logements dont le prix semble inhabituel par rapport à des
+logements similaires.
+Par exemple :
+Logements similaires à Ariana
+
+Appartement A  750 DT
+Appartement B  800 DT
+Appartement C  780 DT
+Appartement D  820 DT
+
+Appartement E  1 500 DT
+Le système peut détecter que le prix de l'appartement E est anormalement élevé par
+rapport aux logements comparables.
+À l'inverse :
+Logements similaires
+ 800 DT
+
+Annonce :
+350 DT
+peut également être signalée comme une anomalie nécessitant une vérification.
+
+ Important dans votre rapport : une anomalie ne signifie pas automatiquement qu'une
+
+annonce est frauduleuse. Le système indique simplement que le prix est inhabituel.
+On peut donc avoir :
+
+        Prix potentiellement inhabituel -- vérification recommandée.
+F8 -- Explication des recommandations
+
+Pour chaque recommandation, le système doit expliquer :
+        « Pourquoi ce logement ? »
+
+Le score ne doit donc pas être une simple valeur affichée sans explication.
+
+Exemple
+
+Appartement A -- 94 % compatible
+Pourquoi cette recommandation ?
+
+ Budget compatible
+ Localisation recherchée
+ Nombre de chambres correspondant
+ Disponible à la date souhaitée
+ Équipements recherchés
+ Surface adaptée
+
+Score final : 94 %
+Pour le matching colocataire :
+Yasmine -- 92 % compatible
+Pourquoi cette recommandation ?
+
+ Budget similaire
+ Même zone recherchée
+ Même période de disponibilité
+ Non-fumeuse
+ Préférence pour un environnement calme
+ Niveau de propreté similaire
+
+Score final : 92 %
+
+Donc votre architecture IA devient
+beaucoup plus intéressante
+
+Avant, on avait essentiellement :
+
+  SMART HOUSING
+
+  
+
+
+
+          
+
+Matching    Matching
+
+logement    colocataire
+
+          
+
+
+
+  
+
+  Binôme
+
+  
+
+  
+
+  Logement
+Avec F6, F7 et F8, vous avez maintenant :
+
+  SMART HOUSING
+
+  
+
+
+
+            
+
+              
+
+RECOMMANDATION MATCHING                    ANALYSE
+
+            
+
+          
+
+                 
+
+   F6            F7
+
+   Estimation Anomalies
+
+   du prix
+
+  
+
+    
+
+Client  Logement Client  Client
+
+  
+
+  
+
+  Binôme
+
+  
+
+  
+
+  Binôme  Logement
+
+  
+
+  
+                         
+                     F8 EXPLICATION
+
+                         
+                         
+                "Pourquoi ce résultat ?"
+
+Et ça change légèrement votre valeur ajoutée
+
+Votre plateforme n'est plus seulement une plateforme de matching.
+Elle devient une plateforme d'aide intelligente à la décision immobilière.
+Vous avez maintenant 4 briques IA principales :
+
+Fonction           Ce que fait l'IA
+
+F2 Client  Logement Recommande les logements adaptés
+
+F4 Client  Client  Recommande les colocataires compatibles
+
+F5 Binôme          Recommande un logement au binôme
+Logement
+
+F6 Estimation du prix Estime le prix d'un logement
+
+F7 Détection       Identifie les prix inhabituels
+d'anomalies
+
+F8 Explication     Explique pourquoi une recommandation a été
+                   faite
+Et F8 est transversal : il peut expliquer F2, F4 et F5.
+
+Votre proposition de valeur devient donc :
+
+        SmartHousing est une plateforme intelligente de location et de colocation qui
+        ne se limite pas à rechercher des logements. Elle combine recommandation
+        de logements, matching de colocataires, formation de binômes, estimation
+        des prix, détection des prix anormaux et explication des recommandations
+        afin d'aider l'utilisateur à prendre une décision plus pertinente.
+
+Ça, c'est beaucoup plus fort pour votre projet de Data Science & AI que la première
+version.
+

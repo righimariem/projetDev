@@ -1,0 +1,44 @@
+# Exemple HTTPS (production, VPS) — copier le bloc dans nginx.conf et adapter
+# le nom de domaine, puis : docker compose exec frontend nginx -s reload
+# Certificats obtenus via certbot (webroot ./certbot/www monté dans le conteneur).
+#
+# server {
+#     listen 443 ssl http2;
+#     server_name homey.exemple.tn;
+#
+#     ssl_certificate     /etc/letsencrypt/live/homey.exemple.tn/fullchain.pem;
+#     ssl_certificate_key /etc/letsencrypt/live/homey.exemple.tn/privkey.pem;
+#     ssl_protocols       TLSv1.2 TLSv1.3;
+#
+#     root /usr/share/nginx/html;
+#     index index.html;
+#
+#     location /assets/ {
+#         expires 30d;
+#         add_header Cache-Control "public, immutable";
+#     }
+#
+#     location /api/ {
+#         proxy_pass http://backend:8000;
+#         proxy_set_header Host $host;
+#         proxy_set_header X-Real-IP $remote_addr;
+#         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#         proxy_set_header X-Forwarded-Proto $scheme;
+#     }
+#
+#     location /media/ {
+#         alias /var/www/media/;
+#         expires 7d;
+#     }
+#
+#     location / {
+#         try_files $uri $uri/ /index.html;
+#     }
+# }
+#
+# # Redirection HTTP → HTTPS
+# server {
+#     listen 80;
+#     server_name homey.exemple.tn;
+#     return 301 https://$host$request_uri;
+# }
